@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>fetch_get_json sample</title>
+  </head>
+  <body>
+
+    <h1><code>fetch_get_json</code> sample</h1>
+    
+    <p>
+      List of repositories in the GitHub
+      <a href="https://github.com/mod-harbour">mod-harbour</a> organization:
+    </p>
+    
+    <p id="loading">Loading...</p>
+    <ul id="repoList" hidden></ul>
+    <p id="error" hidden>There was an error.</p>
+
+    <script src="fetch.js"></script>
+    <script>
+      fetch_get_json(
+        "https://api.github.com/orgs/mod-harbour/repos?direction=desc",
+        (json, result) => {
+          let list = document.getElementById("repoList");
+
+          document.getElementById("loading").hidden = true;
+          list.hidden = false;
+
+          // For each element in the JSON list returned by Github, we create
+          // a `li` element in `loading` containing a link to the repository:
+          // <li><a href="{{html_url}}" target="_blank">{{name}}</a></li>
+          for (let i = 0; i < json.length; i++) {
+            let a = document.createElement("a");
+            a.href = json[i].html_url;
+            a.target = "_blank";
+            a.textContent = json[i].name;
+            let li = document.createElement("li");
+            li.appendChild(a);
+            list.appendChild(li);
+          }
+        },
+        (error) => {
+          document.getElementById("loading").hidden = true;
+          document.getElementById("error").hidden = false;
+          console.log("Error:", error);
+        }
+      );
+    </script>
+
+  </body>
+</html>
